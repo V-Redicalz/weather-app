@@ -25,7 +25,7 @@ SUMMARIES = [
 async def get_weatherforecast(request: Request) -> list[dict]:
     secret = request.headers.get("X-Ocop-Proxy-Secret")
     if secret != "2d76020d-797d-479b-b019-e11c10c33e6f":
-        raise HTTPException(status_code=403, detail="Forbidden")
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
     forecasts: list[dict] = []
     for i in range(1, 6):
