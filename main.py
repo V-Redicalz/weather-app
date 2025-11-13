@@ -1,11 +1,10 @@
+import os
 from datetime import date, timedelta
 from random import choice, randint
-
 from fastapi import FastAPI, HTTPException, Request
 
-
 app = FastAPI(title="Weather API", version="1.0.0")
-
+proxy_secret = os.getenv("proxy_secret")
 
 SUMMARIES = [
     "Freezing",
@@ -21,12 +20,12 @@ SUMMARIES = [
 ]
 
 
-@app.get("/weatherforecast")
+@app.get("/weatherforecast", status_code=200)
 async def get_weatherforecast(request: Request) -> list[dict]:
     secret = request.headers.get("X-Ocop-Proxy-Secret")
-    print("secret: >>{0}<<".format(secret))
-    # TODO: read the value from env
-    if secret != "70f066ef-e256-4b37-97c6-d5b7c8083c8b":
+    print("request secret header: >>{0}<<".format(proxy_secret))
+
+    if secret != proxy_secret or secret is None:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     forecasts: list[dict] = []
@@ -41,5 +40,3 @@ async def get_weatherforecast(request: Request) -> list[dict]:
             }
         )
     return forecasts
-
-
