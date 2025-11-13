@@ -23,7 +23,7 @@ SUMMARIES = [
 @app.get("/weatherforecast", status_code=200)
 async def get_weatherforecast(request: Request) -> list[dict]:
     secret = request.headers.get("X-Ocop-Proxy-Secret")
-    print("request secret header: >>{0}<<".format(proxy_secret))
+    print(f"request from {request.client} with secret header: >>{secret}<<")
 
     if secret != proxy_secret or secret is None:
         raise HTTPException(status_code=401, detail="Unauthorized")
